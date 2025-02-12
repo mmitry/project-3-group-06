@@ -1,3 +1,4 @@
+#app.py
 import pandas as pd
 from flask import Flask, jsonify, render_template, redirect, request
 from sqlHelper import SQLHelper
@@ -50,6 +51,15 @@ def bar_data():
     data = df.to_dict(orient="records")
     return jsonify(data)
 
+@app.route("/api/v1.0/heat_data")
+def heat_data():
+    # Execute query
+    df = sqlHelper.queryHeatData()
+
+    # Convert DataFrame to list of dictionaries
+    data = df.to_dict(orient="records")
+    return jsonify(data)
+
 @app.route("/api/v1.0/table_data")
 def table_data():
     # Execute Query
@@ -61,8 +71,11 @@ def table_data():
 
 @app.route("/api/v1.0/map_data")
 def map_data():
+    # Get the selected year from request arguments
+    selected_year = request.args.get("year", default=None, type=int)
+
     # Execute Query
-    df = sqlHelper.queryMapData()
+    df = sqlHelper.queryMapData(selected_year)
 
     # Turn DataFrame into List of Dictionary
     data = df.to_dict(orient="records")

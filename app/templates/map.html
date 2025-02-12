@@ -64,22 +64,27 @@
         </div>
       </div>
     </nav>
-    <h1>Earthquake MAP!</h1>
+    <h1>MLB Stats Map!</h1>
     <div class="container-fluid">
-        <div class="row">
+      <div class="row">
           <div class="col-md-12">
-              <label class="col-form-label mt-4" for="min-year">Min Year</label>
-              <input class="form-control" id="min-year" name="min-year" type="number" value="1950" min="1950">
-              <button type="button" class="btn btn-primary" id="filter-btn">Filter!</button>
+              <label class="col-form-label mt-4" for="year-dropdown">Select Year</label>
+              <select class="form-control" id="year-dropdown">
+                  <option value="2019">2019</option>
+                  <option value="2020">2020</option>
+                  <option value="2021">2021</option>
+                  <option value="2022">2022</option>
+              </select>
+              <button type="button" class="btn btn-primary mt-2" id="filter-btn">Filter!</button>
           </div>
-        </div>
-        <div class="row">
-            <!-- Map -->
-            <div class="col-md-12">
-                <div id="map_container"></div>
-            </div>
-        </div>
-    </div>
+      </div>
+      <div class="row">
+          <!-- Map -->
+          <div class="col-md-12">
+              <div id="map_container"></div>
+          </div>
+      </div>
+  </div>
 
     <!-- Our JavaScript -->
     <script type="text/javascript" src="static/js/map.js"></script>
