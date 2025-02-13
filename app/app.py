@@ -71,13 +71,14 @@ def table_data():
 
 @app.route("/api/v1.0/map_data")
 def map_data():
-    # Get the selected year from request arguments
+    # Get the selected year and stat from request arguments
     selected_year = request.args.get("year", default=None, type=int)
+    selected_stat = request.args.get("stat", default="HR", type=str)
 
-    # Execute Query
-    df = sqlHelper.queryMapData(selected_year)
+    # Execute Query with selected stat
+    df = sqlHelper.queryMapData(selected_year, selected_stat)
 
-    # Turn DataFrame into List of Dictionary
+    # Convert DataFrame to JSON
     data = df.to_dict(orient="records")
     return jsonify(data)
 

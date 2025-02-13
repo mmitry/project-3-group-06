@@ -76,29 +76,42 @@ class SQLHelper():
         conn.close()
         return(df)
 
-    def queryMapData(self, selected_year=None):
+    def queryMapData(self, selected_year=None, selected_stat="HR"):
         # Create our session (link) from Python to the DB
         conn = self.engine.connect()
 
-        # Define Base Query
-        query = """SELECT
-                    year,
-                    team_abv,
-                    SUM(HR) AS total_home_runs,
-                    latitude,
-                    longitude
-                FROM
-                    mlb_dataset
-                """
+        # Ensure selected_stat is a valid column
+        valid_stats = ["HR", "H", "AVG", "R", "SO"]
+        if selected_stat not in valid_stats:
+            selected_stat = "HR"
 
-        # If a year is provided, filter by that year
+        # Handle AVG differently (take the mean instead of sum)
+        if selected_stat == "AVG":
+            agg_function = f"ROUND(AVG({selected_stat}), 3)"
+        else:
+            agg_function = f"SUM({selected_stat})"
+
+        # Define Base Query
+        query = f"""
+            SELECT
+                year,
+                team,
+                team_abv,
+                {agg_function} AS total_stat,
+                latitude,
+                longitude
+            FROM
+                mlb_dataset
+        """
+
+        # Apply year filter if selected
         if selected_year:
             query += f"WHERE year = {selected_year} "
 
         query += """GROUP BY
-                    year, team_abv, latitude, longitude
-                ORDER BY
-                    total_home_runs DESC;"""
+                        year, team_abv, latitude, longitude
+                    ORDER BY
+                        total_stat DESC;"""
 
         # Execute Query
         df = pd.read_sql(text(query), con=conn)
