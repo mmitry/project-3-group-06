@@ -65,7 +65,7 @@ class SQLHelper():
         conn = self.engine.connect() # Raw SQL/Pandas
 
         # Define Query
-        query = text("""SELECT 
+        query = text("""SELECT DISTINCT
                         year, player_name, player_position, team, team_abv, G, AB, R, H, 
                         HR, RBI, BB, SO, AVG, league, division 
                     FROM mlb_dataset;""")
