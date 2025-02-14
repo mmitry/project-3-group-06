@@ -45,6 +45,7 @@ class SQLHelper():
 
         # Define Query - Aggregate total home runs by year and team
         query = text("""SELECT
+                        year,
                         team_abv,
                         AVG(AVG) AS AVG,
                         SUM(HR) AS HR,

@@ -1,16 +1,26 @@
 // Function to create the map dynamically
 function createMap(selectedYear, selectedStat) {
+  
   // Delete Map
   let map_container = d3.select("#map_container");
-  map_container.html(""); // empties it
-  map_container.append("div").attr("id", "map");
+  map_container.html("");
+  map_container.append("div").attr("id", "map").style("height", "800px");
+
+  // Step 1: CREATE THE BASE LAYERS
+  let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+
+  let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+  });
 
   // Assemble the API query URL.
   let url = `/api/v1.0/map_data?year=${selectedYear}&stat=${selectedStat}`;
-  console.log(url);
+  console.log(`Fetching map data from: ${url}`);
 
   d3.json(url).then(function (data) {
-    console.log(data);
+    console.log("Map Data Received:", data);
 
     // Initialize data containers
     let markers = [];
@@ -55,13 +65,31 @@ function createMap(selectedYear, selectedStat) {
     // Initialize map
     let myMap = L.map("map", {
       center: [36.82, -98.58], // U.S. center
-      zoom: 5,
-      layers: [L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')]
+      zoom: 4.5,
+      layers: [street]
     });
 
-    // Add markers to the map
-    L.layerGroup(markers).addTo(myMap);
-  });
+    // Add marker layer if there are markers
+    let markerLayer = L.layerGroup(markers);
+    if (markers.length > 0) {
+      markerLayer.addTo(myMap);
+    } else {
+      console.warn("No markers to add to the map.");
+    }
+
+    // Layer Control
+    let baseMaps = {
+      "Street Map": street,
+      "Topographic Map": topo
+    };
+
+    let overlayMaps = {
+      "Team Stats": markerLayer
+    };
+
+    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
+  }).catch(error => console.error("Error fetching map data:", error));
 }
 
 // Initialize map with default values

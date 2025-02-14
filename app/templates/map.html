@@ -57,7 +57,7 @@
     
     <h1 class="text-center">MLB Stats Map!</h1>
     <div class="container-fluid">
-      <div class="row">
+      <div class="row mt-3 align-items-center">
           <div class="col-md-4">
               <label for="year-dropdown">Select Year:</label>
               <select id="year-dropdown" class="form-select">
@@ -68,17 +68,17 @@
               </select>
           </div>
           <div class="col-md-6 d-flex justify-content-end align-items-center">
-              <labelclass="me-4">Select Stat:</label>
+              <labelclass="me-2">Select Stat:</label>
               <div>
-                  <input type="radio" name="stat-option" value="HR" checked> Home Runs
-                  <input type="radio" name="stat-option" value="H"> Total Hits
-                  <input type="radio" name="stat-option" value="AVG"> Batting Average
-                  <input type="radio" name="stat-option" value="R"> Runs
+                  <input type="radio" name="stat-option" value="HR" checked> Home Runs | 
+                  <input type="radio" name="stat-option" value="H"> Total Hits | 
+                  <input type="radio" name="stat-option" value="AVG"> Batting Average | 
+                  <input type="radio" name="stat-option" value="R"> Runs | 
                   <input type="radio" name="stat-option" value="SO"> Strikeouts
               </div>
           </div>
       </div>
-      <div class="row">
+      <div class="row mt-3">
           <div class="col-md-12">
               <div id="map_container"></div>
           </div>
