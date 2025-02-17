@@ -120,3 +120,24 @@ class SQLHelper():
         # Close the connection
         conn.close()
         return df
+    
+    def queryRegressionData(self):
+        # Create session (link) from Python to the DB
+        conn = self.engine.connect()
+
+        # Define Query
+        query = text("""
+            SELECT year, team_abv, 
+               SUM(H) AS total_hits, 
+               SUM(HR) AS total_home_runs, 
+               SUM(SO) AS total_strikeouts
+            FROM mlb_dataset
+            GROUP BY year, team_abv
+            ORDER BY year ASC;
+        """)
+
+        df = pd.read_sql(query, con=conn)
+
+        # Close the connection
+        conn.close()
+        return df

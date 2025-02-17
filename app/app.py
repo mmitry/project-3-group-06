@@ -38,6 +38,10 @@ def about_us():
 def work_cited():
     return render_template("works_cited.html")
 
+@app.route("/analysis")
+def analysis():
+    return render_template("analysis.html")
+
 #################################################
 # API Routes
 #################################################
@@ -79,6 +83,14 @@ def map_data():
     df = sqlHelper.queryMapData(selected_year, selected_stat)
 
     # Convert DataFrame to JSON
+    data = df.to_dict(orient="records")
+    return jsonify(data)
+
+@app.route("/api/v1.0/regression_data")
+def regression_data():
+    df = sqlHelper.queryRegressionData()
+
+    # Convert DataFrame to list of dictionaries
     data = df.to_dict(orient="records")
     return jsonify(data)
 
