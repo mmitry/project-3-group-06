@@ -1,3 +1,20 @@
+// Function to handle button click event and update the selected stat
+document.querySelectorAll('.stat-option').forEach(button => {
+  button.addEventListener('click', function() {
+      // Remove active class from all buttons
+      document.querySelectorAll('.stat-option').forEach(btn => {
+          btn.classList.remove('active');
+      });
+      // Add active class to clicked button
+      this.classList.add('active');
+      
+      // Update the selected stat
+      let selectedStat = this.getAttribute('data-value');
+      // Trigger the map creation function with the selected stat
+      init(selectedStat);
+  });
+});
+
 // Function to create the map dynamically
 function createMap(selectedYear, selectedStat) {
   
@@ -93,9 +110,8 @@ function createMap(selectedYear, selectedStat) {
 }
 
 // Initialize map with default values
-function init() {
+function init(selectedStat = 'HR') {
   let selectedYear = d3.select("#year-dropdown").property("value");
-  let selectedStat = d3.select('input[name="stat-option"]:checked').property("value");
   createMap(selectedYear, selectedStat);
 }
 

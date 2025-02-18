@@ -9,7 +9,7 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
 
-    <!-- Leaflet JavaScript code -->
+    <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
@@ -28,41 +28,66 @@
       .navbar-brand img {
           height: 40px; 
       }
-  </style>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png" alt="Baseball Logo">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/dashboard">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/map">Map</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/analysis">Analysis</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/about_us">About Us</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/works_cited">Works Cited</a>
-              </li>
-            </ul>
-          </div>
+
+      /* Custom Button Styles */
+      .btn-group .btn {
+          font-size: 14px;
+          font-weight: 600;
+          padding: 10px 20px;
+          margin-right: 5px;
+      }
+
+      .stat-option.active {
+          background-color: #007bff;
+          border-color: #007bff;
+          color: white;
+      }
+
+      .stat-option:hover {
+          background-color: #0056b3;
+          border-color: #0056b3;
+          color: white;
+      }
+
+      .btn-outline-primary {
+          border-radius: 20px;
+          transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png" alt="Baseball Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/map">Map</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/analysis">Analysis</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about_us">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/works_cited">Works Cited</a>
+            </li>
+          </ul>
         </div>
-      </nav>
+      </div>
+    </nav>
     
     <h1 class="text-center">MLB Stats Map!</h1>
     <div class="container-fluid">
@@ -77,13 +102,13 @@
               </select>
           </div>
           <div class="col-md-6 d-flex justify-content-end align-items-center">
-              <labelclass="me-2">Select Stat:</label>
-              <div>
-                  <input type="radio" name="stat-option" value="HR" checked> Home Runs | 
-                  <input type="radio" name="stat-option" value="H"> Total Hits | 
-                  <input type="radio" name="stat-option" value="AVG"> Batting Average | 
-                  <input type="radio" name="stat-option" value="R"> Runs | 
-                  <input type="radio" name="stat-option" value="SO"> Strikeouts
+              <label class="me-2" for="stat-option">Select Stat:</label>
+              <div class="btn-group" role="group" aria-label="Stat options">
+                  <button type="button" class="btn btn-outline-primary stat-option" data-value="HR">Home Runs</button>
+                  <button type="button" class="btn btn-outline-primary stat-option" data-value="H">Total Hits</button>
+                  <button type="button" class="btn btn-outline-primary stat-option" data-value="AVG">Batting Average</button>
+                  <button type="button" class="btn btn-outline-primary stat-option" data-value="R">Runs</button>
+                  <button type="button" class="btn btn-outline-primary stat-option" data-value="SO">Strikeouts</button>
               </div>
           </div>
       </div>
@@ -94,7 +119,7 @@
       </div>
     </div>
 
-    <!-- Our JavaScript -->
+    <!-- External JavaScript -->
     <script type="text/javascript" src="static/js/map.js"></script>
 
   </body>
