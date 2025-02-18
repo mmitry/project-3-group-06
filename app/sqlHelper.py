@@ -144,3 +144,28 @@ class SQLHelper():
         # Close the connection
         conn.close()
         return df
+    
+    def querySunburstData(self, selected_year=None):
+        conn = self.engine.connect()
+
+        query = text("""
+            SELECT 
+                year, league, division, team, team_abv, player_name,
+                H AS total_hits, 
+                HR AS total_home_runs, 
+                R AS total_runs,
+                RBI AS total_rbi,
+                SO AS total_strikeouts,
+                BB AS total_walks,
+                ROUND(AVG(AVG), 3) AS avg_batting
+            FROM mlb_dataset
+            WHERE year = :selected_year
+            GROUP BY year, league, division, team, team_abv, player_name
+            ORDER BY league, division, team, total_hits DESC;         
+        """)
+
+        df = pd.read_sql(query, con=conn, params={"selected_year": selected_year})
+
+        conn.close()
+
+        return df

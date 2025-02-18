@@ -48,10 +48,10 @@ def analysis():
 
 @app.route("/api/v1.0/bar_data")
 def bar_data():
-    # Execute queries
+    # Execute query
     df = sqlHelper.queryBarData()
 
-    # Turn DataFrame into List of Dictionary
+    # Turn DataFrame into JSON
     data = df.to_dict(orient="records")
     return jsonify(data)
 
@@ -60,7 +60,7 @@ def heat_data():
     # Execute query
     df = sqlHelper.queryHeatData()
 
-    # Convert DataFrame to list of dictionaries
+    # Convert DataFrame to JSON
     data = df.to_dict(orient="records")
     return jsonify(data)
 
@@ -69,13 +69,13 @@ def table_data():
     # Execute Query
     df = sqlHelper.queryTableData()
 
-    # Turn DataFrame into List of Dictionary
+    # Turn DataFrame into JSON
     data = df.to_dict(orient="records")
     return jsonify(data)
 
 @app.route("/api/v1.0/map_data")
 def map_data():
-    # Get the selected year and stat from request arguments
+    # Get the selected year and stat
     selected_year = request.args.get("year", default=None, type=int)
     selected_stat = request.args.get("stat", default="HR", type=str)
 
@@ -88,9 +88,22 @@ def map_data():
 
 @app.route("/api/v1.0/regression_data")
 def regression_data():
+    # Execute Query
     df = sqlHelper.queryRegressionData()
 
-    # Convert DataFrame to list of dictionaries
+    # Convert DataFrame to JSON
+    data = df.to_dict(orient="records")
+    return jsonify(data)
+
+@app.route("/api/v1.0/sunburst_data")
+def sunburst_data():
+    # Get the selected year from the request
+    selected_year = request.args.get("year", default=None, type=int)
+
+    # Execute Query and filter by year
+    df = sqlHelper.querySunburstData(selected_year)
+
+    # Convert DataFrame to JSON
     data = df.to_dict(orient="records")
     return jsonify(data)
 

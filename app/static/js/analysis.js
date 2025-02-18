@@ -8,6 +8,22 @@ let team_colors = {
     "STL": "#C41E3A", "TB": "#9ACEEB", "TEX": "#BF0D3E", "TOR": "#2359C7", "WSH": "#C8102E"
 };
 
+// Define a lookup for team names to their abbreviations (sunburst color correction)
+const team_name_to_abv = {
+    "Arizona Diamondbacks": "ARI", "Atlanta Braves": "ATL", "Baltimore Orioles": "BAL", "Boston Red Sox": "BOS",
+    "Chicago Cubs": "CHC", "Chicago White Sox": "CWS", "Cincinnati Reds": "CIN", "Cleveland Guardians": "CLE",
+    "Colorado Rockies": "COL", "Detroit Tigers": "DET", "Houston Astros": "HOU", "Kansas City Royals": "KC",
+    "Los Angeles Angels": "LAA", "Los Angeles Dodgers": "LAD", "Miami Marlins": "MIA", "Milwaukee Brewers": "MIL",
+    "Minnesota Twins": "MIN", "New York Mets": "NYM", "New York Yankees": "NYY", "Oakland Athletics": "OAK",
+    "Philadelphia Phillies": "PHI", "Pittsburgh Pirates": "PIT", "San Diego Padres": "SD", "San Francisco Giants": "SF",
+    "Seattle Mariners": "SEA", "St. Louis Cardinals": "STL", "Tampa Bay Rays": "TB", "Texas Rangers": "TEX",
+    "Toronto Blue Jays": "TOR", "Washington Nationals": "WSH"
+};
+
+// MLB Color Assignments
+const MLB_RED = "#C8102E";
+const MLB_BLUE = "#0033A0";
+
 // Plot title labels
 const statLabels = {
     "total_hits": "Total Hits",
@@ -88,6 +104,107 @@ function updateRegressionPlot(selectedYear, xStat, yStat) {
     Plotly.newPlot("regression_plot", [scatter, regressionLinePlot], layout);
 }
 
+// Function for sunburst chart
+function updateSunburstChart(selectedYear, selectedStat = "total_hits") {
+    d3.json("/api/v1.0/sunburst_data?year=" + selectedYear).then(function(data) {
+        if (!data.length) {
+            Plotly.newPlot("sunburst_chart", [], { title: `MLB Sunburst Chart (${selectedYear}) - ${selectedStat}` });
+            return;
+        }
+
+        let labels = [];
+        let parents = [];
+        let values = [];
+        let colors = [];
+
+        let divisionSums = {};
+        let teamSums = {};
+
+        data.forEach(d => {
+            let divisionLabel = d.division;
+            let teamLabel = d.team;
+            let playerLabel = d.player_name;
+
+            let fullTeamKey = `${d.division} - ${d.team}`;
+
+            // Totals for hierarchy levels
+            divisionSums[divisionLabel] = (divisionSums[divisionLabel] || 0) + d[selectedStat];
+            teamSums[fullTeamKey] = (teamSums[fullTeamKey] || 0) + d[selectedStat];
+
+            // Add player
+            labels.push(playerLabel);
+            parents.push(teamLabel);
+            values.push(d[selectedStat]);
+            colors.push(team_colors[d.team_abv]); 
+        });
+
+        // Add Teams
+        Object.keys(teamSums).forEach(fullTeamKey => {
+            let parts = fullTeamKey.split(" - ");
+            let teamName = parts[1];
+            let divisionName = parts[0];
+        
+            labels.push(teamName);
+            parents.push(divisionName);
+            values.push(teamSums[fullTeamKey]);
+        
+            // Get the team abbreviation and assign the correct color
+            let teamAbv = team_name_to_abv[teamName] || null;
+            colors.push(teamAbv ? team_colors[teamAbv] : "#888888");
+        });
+
+        // Add Divisions
+        Object.keys(divisionSums).forEach(division => {
+            labels.push(division);
+            parents.push("MLB");
+            values.push(divisionSums[division]);
+            colors.push(MLB_BLUE);
+        });
+
+        // Add MLB
+        labels.push("MLB");
+        parents.push("");
+        values.push(d3.sum(Object.values(divisionSums)));
+        colors.push(MLB_RED);
+
+        let sunburstData = [{
+            type: "sunburst",
+            labels: labels,
+            parents: parents,
+            values: values,
+            branchvalues: "total",
+            textinfo: "label+value",
+            insidetextorientation: "radial",
+            marker: { colors: colors },
+            textfont: {
+                size: labels.map(label => label === "MLB" ? 18 : 12),
+                weight: labels.map(label => label === "MLB" ? "bold" : "normal"),
+                color: "white"
+            }
+        }];
+
+        let statTitle = statLabels[selectedStat] || selectedStat; 
+
+        let layout = {
+            title: `MLB Sunburst Chart (${selectedYear}) - ${statTitle}`,
+            margin: { l: 0, r: 0, b: 0, t: 50 }
+        };
+
+        Plotly.newPlot("sunburst_chart", sunburstData, layout);
+    });
+}
+
+
+// Call function after updating regression plot
+d3.select("#year-dropdown").on("change", function () {
+    updateRegressionPlot(
+        this.value, 
+        mapStatToColumn(d3.select("#x-stat-dropdown").property("value")), 
+        mapStatToColumn(d3.select("#y-stat-dropdown").property("value"))
+    );
+    updateSunburstChart(this.value);
+});
+
 // Dynamically update dropdowns
 function updateDropdownOptions() {
     let xSelected = d3.select("#x-stat-dropdown").property("value");
@@ -141,6 +258,7 @@ d3.select("#year-dropdown").on("change", function () {
         mapStatToColumn(d3.select("#x-stat-dropdown").property("value")), 
         mapStatToColumn(d3.select("#y-stat-dropdown").property("value"))
     );
+    updateSunburstChart(this.value);
 });
 d3.select("#x-stat-dropdown").on("change", function () {
     updateDropdownOptions();
@@ -158,3 +276,11 @@ d3.select("#y-stat-dropdown").on("change", function () {
         mapStatToColumn(this.value)
     );
 });
+
+d3.select("#sunburst-stat-dropdown").on("change", function() {
+    updateSunburstChart(d3.select("#year-dropdown").property("value"), this.value);
+});
+
+// Initialize plots with default year
+updateRegressionPlot("2019", "total_hits", "total_home_runs");
+updateSunburstChart("2019");
