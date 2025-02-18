@@ -34,7 +34,7 @@ function updateDashboard(selectedYear) {
 // Function to update table
 function updateTable(filteredData) {
     let table = $("#mlb_table").DataTable();
-    table.clear(); // Clear previous data
+    table.clear();
 
     filteredData.forEach(d => {
         table.row.add([
@@ -90,10 +90,13 @@ function updateHeatmap(filteredData, year) {
         x: teams,
         y: stats,
         type: "heatmap",
+        showscale: true,
+        xgap: 1,
+        ygap: 1,
         colorscale: [
-            [0, "blue"],    // Lowest value will be blue
-            [0.5, "white"], // Middle value will be white
-            [1, "red"]      // Highest value will be red
+            [0, "blue"],
+            [0.5, "white"],
+            [1, "red"],
         ]
     };
   
