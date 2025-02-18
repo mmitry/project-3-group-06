@@ -8,95 +8,112 @@ let team_colors = {
     "STL": "#C41E3A", "TB": "#9ACEEB", "TEX": "#BF0D3E", "TOR": "#2359C7", "WSH": "#C8102E"
 };
 
-// Load from API
+// Plot title labels
+const statLabels = {
+    "total_hits": "Total Hits",
+    "total_home_runs": "Home Runs",
+    "total_runs": "Total Runs",
+    "total_rbi": "Total RBIs",
+    "total_strikeouts": "Total Strikeouts",
+    "total_walks": "Total Walks",
+    "avg_batting": "Batting Average",
+    "avg_slugging": "Slugging Percentage"
+};
+
+// Data storage
+let fullData = [];
+
+// Load data from API
 d3.json("/api/v1.0/regression_data").then(function(data) {
+    fullData = data;
 
-    // Function to update regression plots based on selected year
-    function updateRegressionPlots(selectedYear) {
-        let filteredData = data.filter(d => d.year == selectedYear);
-
-        // Extract for Hits vs. Home Runs
-        let teams = filteredData.map(d => `${d.team} (${d.team_abv})`);
-        let teamAbvs = filteredData.map(d => d.team_abv);
-        let hits = filteredData.map(d => d.total_hits);
-        let homeRuns = filteredData.map(d => d.total_home_runs);
-
-        // Assign colors based on team
-        let colors = teamAbvs.map(team => team_colors[team] || "#888888");
-
-        // Linear Regression (Hits vs. Home Runs)
-        let regressionHitsHR = regressionLine(hits, homeRuns);
-
-        // Create Plot
-        let hitsHRScatter = {
-            x: hits,
-            y: homeRuns,
-            text: teams,  // Display team names on hover
-            mode: "markers",
-            type: "scatter",
-            name: "Data Points",
-            marker: { color: colors, size: 10 }
-        };
-
-        let hitsHRLine = {
-            x: regressionHitsHR.x,
-            y: regressionHitsHR.y,
-            mode: "lines",
-            type: "scatter",
-            name: "Regression Line",
-            line: { color: "red" }
-        };
-
-        let hitsHRLayout = {
-            title: `Hits vs Home Runs (${selectedYear})`,
-            xaxis: { title: "Total Hits" },
-            yaxis: { title: "Total Home Runs" }
-        };
-
-        Plotly.newPlot("hits_vs_hr", [hitsHRScatter, hitsHRLine], hitsHRLayout);
-
-        // Extract for Strikeouts vs. Home Runs
-        let strikeouts = filteredData.map(d => d.total_strikeouts);
-        let regressionSOHR = regressionLine(strikeouts, homeRuns);
-
-        // Create Plot
-        let soHRScatter = {
-            x: strikeouts,
-            y: homeRuns,
-            text: teams,  // Display team names on hover
-            mode: "markers",
-            type: "scatter",
-            name: "Data Points",
-            marker: { color: colors, size: 10 }
-        };
-
-        let soHRLine = {
-            x: regressionSOHR.x,
-            y: regressionSOHR.y,
-            mode: "lines",
-            type: "scatter",
-            name: "Regression Line",
-            line: { color: "red" }
-        };
-
-        let soHRLayout = {
-            title: `Strikeouts vs Home Runs (${selectedYear})`,
-            xaxis: { title: "Total Strikeouts" },
-            yaxis: { title: "Total Home Runs" }
-        };
-
-        Plotly.newPlot("so_vs_hr", [soHRScatter, soHRLine], soHRLayout);
-    }
-
-    // Initialize Plots with Default Year
-    let defaultYear = "2019";
-    updateRegressionPlots(defaultYear);
-
-    // Listen for year selection change
-    d3.select("#year-dropdown").on("change", function () {
-        updateRegressionPlots(this.value);
-    });
+    // Set default selection
+    updateRegressionPlot("2019", "total_hits", "total_home_runs");
 });
+
+// Regression update function
+function updateRegressionPlot(selectedYear, xStat, yStat) {
+    let filteredData = fullData.filter(d => d.year == selectedYear);
+
+    let teams = filteredData.map(d => `${d.team} (${d.team_abv})`);
+    let teamAbvs = filteredData.map(d => d.team_abv);
+    let xValues = filteredData.map(d => d[xStat]);
+    let yValues = filteredData.map(d => d[yStat]);
+
+    let colors = teamAbvs.map(team => team_colors[team] || "#888888");
+
+    // Perform regression
+    let regressionResult = regressionLine(xValues, yValues);
+    let equation = `y = ${regressionResult.slope.toFixed(2)}x + ${regressionResult.intercept.toFixed(2)}`;
+
+    // Create scatter plot
+    let scatter = {
+        x: xValues,
+        y: yValues,
+        text: teams,
+        mode: "markers",
+        type: "scatter",
+        name: "Data Points",
+        marker: { color: colors, size: 10 }
+    };
+
+    // Regression line
+    let regressionLinePlot = {
+        x: regressionResult.x,
+        y: regressionResult.y,
+        mode: "lines",
+        type: "scatter",
+        name: "Regression Line",
+        line: { color: "red" }
+    };
+
+    // Layout
+    let layout = {
+        title: `${statLabels[xStat] || xStat} vs ${statLabels[yStat] || yStat} (${selectedYear})`,
+        xaxis: { title: statLabels[xStat] },
+        yaxis: { title: statLabels[yStat] },
+        annotations: [
+            {
+                xref: "paper", 
+                yref: "paper",
+                x: 0.95,
+                y: 0.05,
+                text: equation,
+                showarrow: false,
+                font: { size: 14, color: "black" }
+            }
+        ]
+    };
+
+    Plotly.newPlot("regression_plot", [scatter, regressionLinePlot], layout);
+}
+
+// Dynamically update dropdowns
+function updateDropdownOptions() {
+    let xSelected = d3.select("#x-stat-dropdown").property("value");
+    let ySelected = d3.select("#y-stat-dropdown").property("value");
+
+    d3.select("#x-stat-dropdown")
+        .selectAll("option")
+        .property("disabled", function() { return this.value === ySelected; });
+
+    d3.select("#y-stat-dropdown")
+        .selectAll("option")
+        .property("disabled", function() { return this.value === xSelected; });
+}
+
+// Function for dropdown selection/API matching
+function mapStatToColumn(stat) {
+    const statMap = {
+        "H": "total_hits",
+        "HR": "total_home_runs",
+        "R": "total_runs",
+        "RBI": "total_rbi",
+        "SO": "total_strikeouts",
+        "BB": "total_walks"
+    };
+    return statMap[stat] || stat;
+}
 
 // Function to calculate linear regression
 function regressionLine(xValues, yValues) {
@@ -114,5 +131,30 @@ function regressionLine(xValues, yValues) {
     let regressionX = [xMin, xMax];
     let regressionY = [intercept + slope * xMin, intercept + slope * xMax];
 
-    return { x: regressionX, y: regressionY };
+    return { x: regressionX, y: regressionY, slope, intercept };
 }
+
+// Event Listeners
+d3.select("#year-dropdown").on("change", function () {
+    updateRegressionPlot(
+        this.value, 
+        mapStatToColumn(d3.select("#x-stat-dropdown").property("value")), 
+        mapStatToColumn(d3.select("#y-stat-dropdown").property("value"))
+    );
+});
+d3.select("#x-stat-dropdown").on("change", function () {
+    updateDropdownOptions();
+    updateRegressionPlot(
+        d3.select("#year-dropdown").property("value"), 
+        mapStatToColumn(this.value), 
+        mapStatToColumn(d3.select("#y-stat-dropdown").property("value"))
+    );
+});
+d3.select("#y-stat-dropdown").on("change", function () {
+    updateDropdownOptions();
+    updateRegressionPlot(
+        d3.select("#year-dropdown").property("value"), 
+        mapStatToColumn(d3.select("#x-stat-dropdown").property("value")), 
+        mapStatToColumn(this.value)
+    );
+});

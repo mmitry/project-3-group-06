@@ -128,9 +128,12 @@ class SQLHelper():
         # Define Query
         query = text("""
             SELECT year, team, team_abv,
-               SUM(H) AS total_hits, 
-               SUM(HR) AS total_home_runs, 
-               SUM(SO) AS total_strikeouts
+                SUM(H) AS total_hits, 
+                SUM(HR) AS total_home_runs, 
+                SUM(R) AS total_runs,
+                SUM(RBI) AS total_rbi,
+                SUM(SO) AS total_strikeouts,
+                SUM(BB) AS total_walks
             FROM mlb_dataset
             GROUP BY year, team, team_abv
             ORDER BY year ASC;

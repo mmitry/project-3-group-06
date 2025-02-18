@@ -22,71 +22,74 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/dashboard">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/map">Map</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="/analysis">Analysis</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/about_us">About Us</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/works_cited">Works Cited</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <h1 class="text-center mt-3">MLB Regression Analysis</h1>
-      <p class="text-center">Exploring the relationship between Hits, Home Runs, and Strikeouts</p>
-
+  <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <div class="container-fluid">
-          <!-- Year Selector -->
-          <div class="row">
-              <div class="col-md-6">
-                  <label for="year-dropdown">Select Year:</label>
-                  <select id="year-dropdown" class="form-select">
-                      <option value="2019">2019</option>
-                      <option value="2020">2020</option>
-                      <option value="2021">2021</option>
-                      <option value="2022">2022</option>
-                  </select>
-              </div>
-          </div>
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/map">Map</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/analysis">Analysis</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about_us">About Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="/works_cited">Works Cited</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-          <!-- Regression Plots -->
-          <div class="row mt-3">
-              <!-- Hits vs Home Runs Regression -->
-              <div class="col-md-6" style="background-color: lightgrey;">
-                <h3 class="text-center">Hits vs Home Runs</h3>
-                <div id="hits_vs_hr"></div>
-              </div>
+  <h1 class="text-center mt-3">MLB Dynamic Regression Analysis</h1>
+  <p class="text-center">Select two stats to compare with a regression line.</p>
 
-              <!-- Strikeouts vs Home Runs Regression -->
-              <div class="col-md-6" style="background-color: lightgrey;">
-                <h3 class="text-center">Strikeouts vs Home Runs</h3>
-                <div id="so_vs_hr"></div>
-              </div>
+  <div class="container-fluid">
+    <!-- Dropdowns for Year & Stat Selection -->
+    <div class="row d-flex align-items-center">
+        <div class="col-lg-4 col-md-6">
+            <label for="year-dropdown">Select Year:</label>
+            <select id="year-dropdown" class="form-select">
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+            </select>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <label for="x-stat-dropdown">Select X-Axis Stat:</label>
+            <select id="x-stat-dropdown" class="form-select">
+                <option value="total_hits">Total Hits</option>
+                <option value="total_home_runs">Home Runs</option>
+                <option value="total_runs">Total Runs</option>
+                <option value="total_rbi">Total RBIs</option>
+                <option value="total_strikeouts">Total Strikeouts</option>
+                <option value="total_walks">Total Walks</option>
+            </select>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <label for="y-stat-dropdown">Select Y-Axis Stat:</label>
+            <select id="y-stat-dropdown" class="form-select">
+                <option value="total_home_runs">Home Runs</option>
+                <option value="total_hits">Total Hits</option>
+                <option value="total_runs">Total Runs</option>
+                <option value="total_rbi">Total RBIs</option>
+                <option value="total_strikeouts">Total Strikeouts</option>
+                <option value="total_walks">Total Walks</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+      <!-- Regression Plot -->
+      <div class="row mt-5 d-flex justify-content-center">
+          <div class="col-md-8 mx-auto" style="background-color: lightgrey; min-height: 600px; padding: 20px; border-radius: 10px;">
+              <div id="regression_plot" style="height: 100%;"></div>
           </div>
       </div>
+  </div>
 
-    <script src="static/js/analysis.js"></script>
+  <script src="static/js/analysis.js"></script>
 </body>
 
 </html>
