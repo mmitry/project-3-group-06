@@ -72,38 +72,43 @@ function updateBarChart(filteredData, year) {
 
 // Function to update heatmap
 function updateHeatmap(filteredData, year) {
-  if (!filteredData || filteredData.length === 0) {
-      console.error(`Heatmap data is missing or empty for year ${year}.`);
-      return;
+    if (!filteredData || filteredData.length === 0) {
+        console.error(`Heatmap data is missing or empty for year ${year}.`);
+        return;
+    }
+  
+    let teams = filteredData.map(d => d.team_abv);
+    let stats = ["AVG", "HR", "R", "SO"];
+  
+    // Ensure numeric values, default to 0 if undefined
+    let zValues = stats.map(stat => filteredData.map(d => d[stat] !== null ? +d[stat] : 0));
+  
+    console.log("Heatmap Data:", { teams, stats, zValues });
+  
+    let trace = {
+        z: zValues,
+        x: teams,
+        y: stats,
+        type: "heatmap",
+        colorscale: [
+            [0, "blue"],    // Lowest value will be blue
+            [0.5, "white"], // Middle value will be white
+            [1, "red"]      // Highest value will be red
+        ]
+    };
+  
+    let layout = {
+        title: `MLB Team Statistics Heatmap (${year})`,
+        xaxis: { title: "Teams", tickangle: -45 },
+        yaxis: { title: "Statistics" },
+        height: 500,
+        width: 950,
+        margin: { t: 50, l: 100, r: 50, b: 100 }
+    };
+  
+    Plotly.newPlot("heatmap", [trace], layout);
   }
-
-  let teams = filteredData.map(d => d.team_abv);
-  let stats = ["AVG", "HR", "R", "SO"];
-
-  // Ensure numeric values, default to 0 if undefined
-  let zValues = stats.map(stat => filteredData.map(d => d[stat] !== null ? +d[stat] : 0));
-
-  console.log("Heatmap Data:", { teams, stats, zValues });
-
-  let trace = {
-      z: zValues,
-      x: teams,
-      y: stats,
-      type: "heatmap",
-      colorscale: "Viridis"
-  };
-
-  let layout = {
-      title: `MLB Team Statistics Heatmap (${year})`,
-      xaxis: { title: "Teams", tickangle: -45 },
-      yaxis: { title: "Statistics" },
-      height: 500,
-      width: 950,
-      margin: { t: 50, l: 100, r: 50, b: 100 }
-  };
-
-  Plotly.newPlot("heatmap", [trace], layout);
-}
+  
 
 // Listen for year selection change
 $("#year-dropdown").on("change", function () {
