@@ -5,13 +5,20 @@ document.querySelectorAll('.stat-option').forEach(button => {
       document.querySelectorAll('.stat-option').forEach(btn => {
           btn.classList.remove('active');
       });
+
       // Add active class to clicked button
       this.classList.add('active');
       
       // Update the selected stat
       let selectedStat = this.getAttribute('data-value');
-      // Trigger the map creation function with the selected stat
-      init(selectedStat);
+      
+      // Ensure the selectedStat is not undefined or null
+      if (selectedStat) {
+          // Trigger the map creation function with the selected stat
+          init(selectedStat);  // Ensure init function handles the selected stat properly
+      } else {
+          console.error('Selected stat is undefined.');
+      }
   });
 });
 
@@ -71,11 +78,11 @@ function createMap(selectedYear, selectedStat) {
           fillColor: chooseColor(row.total_stat),
           radius: getRadius(row.total_stat)
         }).bindPopup(
-          `<div style = "text-align: center;">
+          `<div style="text-align: center;">
             <h3>${row.team} (${row.team_abv})</h3>
-            <hr style = "border: 1px solid gray;">
-            <h3>${selectedStat}: ${row.total_stat}</h3>
-           </div>`
+            <hr style="border: 1px solid grey;">
+            <h4>${selectedStat}: ${row.total_stat}</h4>
+          </div>`
         );
 
         markers.push(marker);
@@ -93,8 +100,6 @@ function createMap(selectedYear, selectedStat) {
     let markerLayer = L.layerGroup(markers);
     if (markers.length > 0) {
       markerLayer.addTo(myMap);
-    } else {
-      console.warn("No markers to add to the map.");
     }
 
     // Layer Control
@@ -109,7 +114,7 @@ function createMap(selectedYear, selectedStat) {
 
     L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-  }).catch(error => console.error("Error fetching map data:", error));
+  });
 }
 
 // Initialize map with default values
@@ -119,8 +124,15 @@ function init(selectedStat = 'HR') {
 }
 
 // Event Listeners
-d3.select("#year-dropdown").on("change", init);
-d3.selectAll('input[name="stat-option"]').on("change", init);
+d3.select("#year-dropdown").on("change", function() {
+  let selectedStat = document.querySelector('.stat-option.active')?.getAttribute('data-value') || 'HR';
+  init(selectedStat);
+});
+
+d3.selectAll('input[name="stat-option"]').on("change", function() {
+  let selectedStat = this.value; // Assuming radio buttons, update accordingly
+  init(selectedStat);
+});
 
 // On page load
 init();
