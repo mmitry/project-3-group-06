@@ -71,8 +71,11 @@ function createMap(selectedYear, selectedStat) {
           fillColor: chooseColor(row.total_stat),
           radius: getRadius(row.total_stat)
         }).bindPopup(
-          `<h3>${row.team} (${row.team_abv})</h3><hr>
-           <p>${selectedStat}: ${row.total_stat}</p>`
+          `<div style = "text-align: center;">
+            <h3>${row.team} (${row.team_abv})</h3>
+            <hr style = "border: 1px solid gray;">
+            <h3>${selectedStat}: ${row.total_stat}</h3>
+           </div>`
         );
 
         markers.push(marker);
