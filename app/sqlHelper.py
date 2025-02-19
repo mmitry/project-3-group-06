@@ -47,7 +47,7 @@ class SQLHelper():
         query = text("""SELECT
                         year,
                         team_abv,
-                        AVG(AVG) AS AVG,
+                        ROUND(AVG, 3) AS AVG,
                         SUM(HR) AS HR,
                         SUM(R) AS R,
                         SUM(SO) AS SO

@@ -97,7 +97,8 @@ function updateHeatmap(filteredData, year) {
             [0, "blue"],
             [0.5, "white"],
             [1, "red"],
-        ]
+        ],
+        hovertemplate: "Team: %{x}<br>Stat: %{y}<br>Result: %{z}<extra></extra>"
     };
   
     let layout = {
