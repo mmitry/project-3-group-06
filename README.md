@@ -1,2 +1,4 @@
 # project-3-group-06
 Data Bootcamp Project 3 Group 6
+
+Project three explores MLB trends for major hitters from 2019-2022 by analyzing player and team performance data. Using datasets from Kaggle, the project team merged player statistics with stadium geographic information to investigae correlations between home runs, strikeouts, run, and team performance. The analysis revealed positive correlations between power hitting and striketouts but found no significant impact at altitude on overall perforamnce. Through visualizations like bar graphs, heatmaps, and regression plots, the project highlighted both individual playter contributions and team-wide efforts. Despite dataset limitations, including absence of a full roster and the abbreviated 2020 season, the project key insights into modern offensive strategies and lays the foundation for future predictive analytics and expanded research. 
